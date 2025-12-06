@@ -11,10 +11,7 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-try:
-    logo = Image.open("Logo1_.png")
-except:
-    logo = None
+logo = Image.open("Logo1_.png")
 
 # ---------------------------
 # API ENDPOINTS

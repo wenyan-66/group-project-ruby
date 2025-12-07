@@ -113,7 +113,7 @@ def _(C_VALUE, MAX_ITER, SOLVER, TEST_SIZE, X_scaled, y):
     )
 
     model = LogisticRegression(
-        solver=SOLVER, C=C_VALUE, max_iter=MAX_ITER, random_state=42
+        solver=SOLVER, C=C_VALUE, class_weight="balanced", max_iter=MAX_ITER, random_state=42
     )
     model.fit(X_train, y_train)
 

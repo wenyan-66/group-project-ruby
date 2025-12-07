@@ -14,6 +14,7 @@ with app.setup:
                                  confusion_matrix, f1_score, roc_auc_score)
     from sklearn.model_selection import train_test_split
     from sklearn.preprocessing import StandardScaler
+    from sklearn.ensemble import RandomForestClassifier
 
 
 @app.cell(hide_code=True)
@@ -40,7 +41,8 @@ def _():
                          'Contract_one year', 
                          'Contract_two year',
                          "PaymentMethod_electronic check",
-                         "TotalCharges"]
+                         'OnlineSecurity_yes',
+                         'PaperlessBilling_yes']
     TEST_SIZE = 0.20
     C_VALUE = 1.0
     MAX_ITER = 1000
@@ -103,7 +105,7 @@ def _(preprocess_telco, telco_df):
 
 
 @app.cell
-def _(C_VALUE, MAX_ITER, SOLVER, TEST_SIZE, X_scaled, y):
+def _(C_VALUE,SOLVER, MAX_ITER,TEST_SIZE, X_scaled, y):  
     X_train, X_test, y_train, y_test = train_test_split(
         X_scaled,
         y,
@@ -115,10 +117,18 @@ def _(C_VALUE, MAX_ITER, SOLVER, TEST_SIZE, X_scaled, y):
     model = LogisticRegression(
         solver=SOLVER, C=C_VALUE, class_weight="balanced", max_iter=MAX_ITER, random_state=42
     )
+
+    #model1 = RandomForestClassifier(class_weight="balanced", n_estimators=100, max_depth=10,
+    #min_samples_split=20,random_state=42
+    #) # LR is performing better
+
     model.fit(X_train, y_train)
 
-    y_pred = model.predict(X_test)
     y_proba = model.predict_proba(X_test)[:, 1]
+    threshold = 0.4  # Lower = catch more churners, more false alarms
+    y_pred = (y_proba >= threshold).astype(int)
+
+    #y_pred = model.predict(X_test)
 
     metrics = {
         "accuracy": accuracy_score(y_test, y_pred),
@@ -127,7 +137,7 @@ def _(C_VALUE, MAX_ITER, SOLVER, TEST_SIZE, X_scaled, y):
         "confusion": confusion_matrix(y_test, y_pred),
         "report": classification_report(y_test, y_pred),
     }
-    return metrics, model
+    return metrics, model, 
 
 
 @app.cell

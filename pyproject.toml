@@ -9,6 +9,7 @@ dependencies = [
     "joblib>=1.5.2",
     "marimo>=0.17.8",
     "pandas>=2.3.3",
+    "predictions>=1.0.2",
     "requests>=2.32.5",
     "scikit-learn>=1.7.2",
     "streamlit>=1.52.1",
